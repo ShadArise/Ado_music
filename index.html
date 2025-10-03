@@ -1,0 +1,501 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎵 Ado Music Player - うっせぇわ World</title>
+    <meta name="description" content="Reproductor musical dedicado a Ado, la sensación del J-Pop moderno">
+    <meta name="theme-color" content="#ff1b6b">
+    
+    <!-- Favicon y iconos de app -->
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='images/apple-touch-icon.png') }}">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;700;900&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    
+    <!-- Preload recursos críticos -->
+    <link rel="preload" href="{{ url_for('static', filename='images/ado_profile.jpg') }}" as="image">
+    <link rel="prefetch" href="{{ url_for('static', filename='js/script.js') }}">
+</head>
+<body>
+    <!-- Loader inicial -->
+    <div id="loader" class="loader-overlay">
+        <div class="loader-content">
+            <div class="loader-spinner"></div>
+            <h2 class="loader-text">Loading Ado World...</h2>
+            <div class="loader-progress">
+                <div class="loader-progress-bar"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Fondo animado con partículas -->
+    <div class="animated-bg">
+        <div class="particle-field">
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+        </div>
+        <div class="wave-animation"></div>
+    </div>
+
+    <!-- Header mejorado -->
+    <header class="main-header" role="banner">
+        <div class="header-content">
+            <div class="logo-section">
+                <div class="logo-icon">
+                    <i class="fas fa-music"></i>
+                </div>
+                <div class="logo-text">
+                    <h1 class="main-title">
+                        <span class="title-ado">Ado</span>
+                        <span class="title-music">Music Player</span>
+                    </h1>
+                    <p class="subtitle">うっせぇわ の世界へようこそ</p>
+                </div>
+            </div>
+            
+            <nav class="header-nav">
+                <div class="nav-items">
+                    <button class="nav-btn active" data-tab="music">
+                        <i class="fas fa-music"></i>
+                        <span>Música</span>
+                    </button>
+                    <button class="nav-btn" data-tab="videos">
+                        <i class="fas fa-video"></i>
+                        <span>Videos</span>
+                    </button>
+                    <button class="nav-btn" data-tab="lyrics">
+                        <i class="fas fa-align-left"></i>
+                        <span>Letras</span>
+                    </button>
+                </div>
+                
+                <div class="user-actions">
+                    <button class="theme-toggle" id="theme-toggle" aria-label="Cambiar tema">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                    <button class="settings-btn" id="settings-btn" aria-label="Configuración">
+                        <i class="fas fa-cog"></i>
+                    </button>
+                    <a href="/logout" class="logout-btn" title="Cerrar Sesión">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Salir</span>
+                    </a>
+                </div>
+            </nav>
+        </div>
+        
+        <!-- Indicador de estado de conexión -->
+        <div class="connection-status" id="connection-status">
+            <i class="fas fa-wifi"></i>
+            <span>Conectado</span>
+        </div>
+    </header>
+
+    <!-- Contenido principal con tabs -->
+    <main class="main-content" role="main">
+        <!-- Tab: Música -->
+        <section class="tab-content active" id="music-tab">
+            <div class="container music-container">
+                <!-- Reproductor principal -->
+                <div class="music-player glassmorphism">
+                    <div class="player-header">
+                        <h2 class="section-title">
+                            <i class="fas fa-play-circle"></i>
+                            Now Playing
+                        </h2>
+                        <div class="player-actions">
+                            <button class="action-btn" id="shuffle-btn" title="Aleatorio">
+                                <i class="fas fa-random"></i>
+                            </button>
+                            <button class="action-btn" id="repeat-btn" title="Repetir">
+                                <i class="fas fa-redo"></i>
+                            </button>
+                            <button class="action-btn" id="favorite-btn" title="Favorito">
+                                <i class="far fa-heart"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="album-section">
+                        <div class="album-art-container">
+                            <img src="{{ url_for('static', filename='images/ado_profile.jpg') }}" 
+                                 id="album-art" 
+                                 alt="Ado Profile" 
+                                 class="album-art">
+                            <div class="play-overlay" id="play-overlay">
+                                <button class="play-btn-large" id="main-play-btn">
+                                    <i class="fas fa-play"></i>
+                                </button>
+                            </div>
+                            <div class="vinyl-effect"></div>
+                        </div>
+                        
+                        <div class="song-details">
+                            <h2 id="song-title" class="song-title">Selecciona una canción</h2>
+                            <h3 id="song-artist" class="song-artist">Ado</h3>
+                            <div class="song-tags">
+                                <span class="tag tag-genre">J-Pop</span>
+                                <span class="tag tag-year">2024</span>
+                                <span class="tag tag-mood" id="song-mood">Energetic</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Controles de audio mejorados -->
+                    <div class="audio-controls-section">
+                        <div class="audio-controls-wrapper">
+                            <div class="playback-controls">
+                                <button class="control-btn" id="prev-btn">
+                                    <i class="fas fa-step-backward"></i>
+                                </button>
+                                <button class="control-btn play-pause" id="play-pause-btn">
+                                    <i class="fas fa-play"></i>
+                                </button>
+                                <button class="control-btn" id="next-btn">
+                                    <i class="fas fa-step-forward"></i>
+                                </button>
+                            </div>
+                            
+                            <div class="progress-section">
+                                <span class="time-current" id="current-time">0:00</span>
+                                <div class="progress-container">
+                                    <div class="progress-bar" id="progress-bar">
+                                        <div class="progress-fill" id="progress-fill"></div>
+                                        <div class="progress-handle" id="progress-handle"></div>
+                                    </div>
+                                </div>
+                                <span class="time-total" id="total-time">0:00</span>
+                            </div>
+                            
+                            <div class="volume-controls">
+                                <button class="control-btn" id="mute-btn">
+                                    <i class="fas fa-volume-up"></i>
+                                </button>
+                                <div class="volume-slider">
+                                    <input type="range" id="volume-range" min="0" max="100" value="70">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <audio id="audio-player" preload="metadata" crossorigin="anonymous">
+                            <source src="" type="audio/mpeg">  <!-- Tipo explícito para MP3 -->
+                            Tu navegador no soporta el elemento de audio.
+                        </audio>
+                    </div>
+                    
+                    <!-- Información de la canción -->
+                    <div class="song-info-section" id="song-info-section">
+                        <div class="info-header">
+                            <h4><i class="fas fa-info-circle"></i> Información de la Canción</h4>
+                            <button class="toggle-info" id="toggle-info">
+                                <i class="fas fa-chevron-down"></i>
+                            </button>
+                        </div>
+                        <div class="info-content" id="song-info-text">
+                            <p>Selecciona una canción para ver su información...</p>
+                        </div>
+                    </div>
+
+                    <!-- Visualizador de audio -->
+                    <div class="audio-visualizer" id="audio-visualizer">
+                        <canvas id="visualizer-canvas"></canvas>
+                    </div>
+                </div>
+                
+                <!-- Playlist mejorada -->
+                <aside class="playlist-section glassmorphism" role="complementary">
+                    <div class="playlist-header">
+                        <h2 class="section-title">
+                            <i class="fas fa-list-music"></i>
+                            Biblioteca Musical
+                        </h2>
+                        <div class="playlist-actions">
+                            <button class="action-btn" id="search-toggle" title="Buscar">
+                                <i class="fas fa-search"></i>
+                            </button>
+                            <button class="action-btn" id="sort-toggle" title="Ordenar">
+                                <i class="fas fa-sort"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Barra de búsqueda -->
+                    <div class="search-bar" id="search-bar">
+                        <input type="text" id="song-search" placeholder="Buscar canciones..." autocomplete="off">
+                        <i class="fas fa-search search-icon"></i>
+                    </div>
+                    
+                    <!-- Tabs de playlist -->
+                    <div class="playlist-tabs">
+                        <button class="tab-btn active" data-playlist="all">Todas</button>
+                        <button class="tab-btn" data-playlist="favorites">Favoritas</button>
+                        <button class="tab-btn" data-playlist="recent">Recientes</button>
+                    </div>
+                    
+                    <!-- Lista de canciones -->
+                    <div class="songs-container">
+                        <h3 class="playlist-subtitle">Lista de Canciones</h3>
+                        <ul class="songs-list" id="songs-list">
+                            {% for id, song in songs.items() %}
+                            <li class="song-item" 
+                                data-song-id="{{ id }}"
+                                onclick="playSong('{{ song.file }}', '{{ song.title }}', '{{ song.artist }}', '{{ song.info }}', '{{ id }}')">
+                                <div class="song-item-content">
+                                    <div class="song-number">{{ loop.index }}</div>
+                                    <div class="song-details">
+                                        <div class="song-name">{{ song.title }}</div>
+                                        <div class="song-meta">{{ song.artist }} • 2024</div>
+                                    </div>
+                                    <div class="song-actions">
+                                        <button class="song-action-btn" onclick="event.stopPropagation(); toggleFavorite('{{ id }}')" title="Favorito">
+                                            <i class="far fa-heart"></i>
+                                        </button>
+                                        <button class="song-action-btn" onclick="event.stopPropagation(); showSongMenu('{{ id }}')" title="Más opciones">
+                                            <i class="fas fa-ellipsis-v"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="song-waveform">
+                                    <div class="wave-bar" style="height: 20%"></div>
+                                    <div class="wave-bar" style="height: 60%"></div>
+                                    <div class="wave-bar" style="height: 40%"></div>
+                                    <div class="wave-bar" style="height: 80%"></div>
+                                    <div class="wave-bar" style="height: 30%"></div>
+                                </div>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    
+                    <!-- Top canciones -->
+                    <div class="top-songs-section">
+                        <h3 class="playlist-subtitle">
+                            <i class="fas fa-fire"></i>
+                            Top Canciones
+                        </h3>
+                        <ol class="top-songs-list">
+                            {% for song_id in top_songs %}
+                            <li class="top-song-item">
+                                <span class="top-rank">{{ loop.index }}</span>
+                                <span class="top-song-name">{{ songs[song_id].title }}</span>
+                                <div class="top-song-stats">
+                                    <i class="fas fa-play"></i>
+                                    <span>{{ (loop.index * 1000 + (loop.index * 234)) }}</span>
+                                </div>
+                            </li>
+                            {% endfor %}
+                        </ol>
+                    </div>
+                </aside>
+            </div>
+        </section>
+
+        <!-- Tab: Videos -->
+        <section class="tab-content" id="videos-tab">
+            <div class="container video-container">
+                <div class="video-player-section glassmorphism">
+                    <div class="video-header">
+                        <h2 class="section-title">
+                            <i class="fas fa-video"></i>
+                            Videos Musicales
+                        </h2>
+                        <div class="video-controls-top">
+                            <button class="action-btn" id="fullscreen-btn" title="Pantalla completa">
+                                <i class="fas fa-expand"></i>
+                            </button>
+                            <button class="action-btn" id="theater-mode" title="Modo teatro">
+                                <i class="fas fa-tv"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="video-player-container">
+                        <video id="video-player-element" 
+                               class="main-video" 
+                               controls 
+                               poster="{{ url_for('static', filename='images/video-poster.jpg') }}"
+                               preload="metadata">
+                            <source src="{{ url_for('static', filename='videos/usseewa_video.mp4') }}" type="video/mp4">
+                            <source src="{{ url_for('static', filename='videos/usseewa_video.webm') }}" type="video/webm">
+                            <track kind="subtitles" src="{{ url_for('static', filename='subtitles/usseewa_es.vtt') }}" srclang="es" label="Español">
+                            <track kind="subtitles" src="{{ url_for('static', filename='subtitles/usseewa_jp.vtt') }}" srclang="ja" label="日本語">
+                            Tu navegador no soporta videos HTML5.
+                        </video>
+                        
+                        <div class="video-overlay">
+                            <div class="video-info">
+                                <h3 id="video-title">うっせぇわ (Usseewa)</h3>
+                                <p id="video-description">El video musical oficial de la sensación viral de Ado</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Playlist de videos -->
+                <div class="video-playlist glassmorphism">
+                    <h3>Playlist de Videos</h3>
+                    <div class="video-grid">
+                        <div class="video-item active">
+                            <div class="video-thumbnail">
+                                <img src="{{ url_for('static', filename='images/usseewa_thumb.jpg') }}" alt="Usseewa">
+                                <div class="play-overlay-small">
+                                    <i class="fas fa-play"></i>
+                                </div>
+                            </div>
+                            <div class="video-details">
+                                <h4>うっせぇわ (Usseewa)</h4>
+                                <p>Video Oficial</p>
+                                <span class="video-duration">3:24</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tab: Letras -->
+        <section class="tab-content" id="lyrics-tab">
+            <div class="container lyrics-container">
+                <div class="lyrics-section glassmorphism">
+                    <div class="lyrics-header">
+                        <h2 class="section-title">
+                            <i class="fas fa-align-left"></i>
+                            Letras
+                        </h2>
+                        <div class="lyrics-controls">
+                            <button class="action-btn" id="lyrics-sync" title="Sincronización">
+                                <i class="fas fa-sync"></i>
+                            </button>
+                            <select id="lyrics-lang" class="lang-selector">
+                                <option value="jp">日本語</option>
+                                <option value="es">Español</option>
+                                <option value="en">English</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="lyrics-content" id="lyrics-content">
+                        <p class="lyrics-placeholder">Selecciona una canción para ver las letras...</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="footer-content">
+            <div class="footer-info">
+                <p>&copy; 2024 Ado Music Player. Hecho con ❤️ para los fans de Ado</p>
+                <p class="footer-links">
+                    <a href="#" class="footer-link">Acerca de</a>
+                    <a href="#" class="footer-link">Contacto</a>
+                    <a href="#" class="footer-link">Privacidad</a>
+                </p>
+            </div>
+            <div class="social-links">
+                <a href="#" class="social-link" aria-label="YouTube">
+                    <i class="fab fa-youtube"></i>
+                </a>
+                <a href="#" class="social-link" aria-label="Twitter">
+                    <i class="fab fa-twitter"></i>
+                </a>
+                <a href="#" class="social-link" aria-label="Instagram">
+                    <i class="fab fa-instagram"></i>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Menú contextual -->
+    <div class="context-menu" id="context-menu">
+        <div class="context-menu-item" data-action="play">
+            <i class="fas fa-play"></i> Reproducir
+        </div>
+        <div class="context-menu-item" data-action="favorite">
+            <i class="fas fa-heart"></i> Agregar a favoritos
+        </div>
+        <div class="context-menu-item" data-action="playlist">
+            <i class="fas fa-plus"></i> Agregar a playlist
+        </div>
+        <div class="context-menu-item" data-action="download">
+            <i class="fas fa-download"></i> Descargar
+        </div>
+    </div>
+
+    <!-- Toast notifications -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- Modal de configuración -->
+    <div class="modal-overlay" id="settings-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Configuración</h3>
+                <button class="modal-close" id="modal-close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="setting-group">
+                    <label for="auto-play">Reproducción automática</label>
+                    <input type="checkbox" id="auto-play" class="toggle-switch">
+                </div>
+                <div class="setting-group">
+                    <label for="crossfade">Crossfade</label>
+                    <input type="range" id="crossfade" min="0" max="10" value="3">
+                </div>
+                <div class="setting-group">
+                    <label for="quality">Calidad de audio</label>
+                    <select id="quality">
+                        <option value="high">Alta</option>
+                        <option value="medium">Media</option>
+                        <option value="low">Baja</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script>
+        // Inicialización de la aplicación
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeApp();
+        });
+        
+        // Función de inicialización
+        function initializeApp() {
+            hideLoader();
+            initializeTabs();
+            initializeAudioVisualizer();
+            initializeKeyboardShortcuts();
+            loadUserPreferences();
+        }
+        
+        // Ocultar loader
+        function hideLoader() {
+            const loader = document.getElementById('loader');
+            setTimeout(() => {
+                loader.style.opacity = '0';
+                setTimeout(() => {
+                    loader.style.display = 'none';
+                }, 300);
+            }, 1500);
+        }
+    </script>
+</body>
+</html>
